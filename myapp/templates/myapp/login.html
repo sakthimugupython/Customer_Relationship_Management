@@ -1,0 +1,76 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Login - CRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 70px); margin-left: -260px; width: calc(100% + 260px);">
+    <div style="width: 100%; max-width: 420px; padding: 20px;">
+        <div class="card" style="box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); border-radius: 16px; overflow: hidden;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%); padding: 40px 20px; text-align: center; color: white;">
+                <div style="font-size: 48px; margin-bottom: 16px;">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h2 style="margin: 0; font-weight: 700; font-size: 28px;">CRM Pro</h2>
+                <p style="margin: 8px 0 0 0; opacity: 0.9;">Customer Relationship Management</p>
+            </div>
+
+            <!-- Body -->
+            <div style="padding: 40px;">
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <strong>Login Failed</strong>
+                    <p class="mb-0">{{ error }}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Enter your username" required autofocus
+                               style="height: 44px; font-size: 15px;">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Enter your password" required
+                               style="height: 44px; font-size: 15px;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" style="height: 44px; font-weight: 600; font-size: 15px;">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: var(--gray-50); padding: 20px; text-align: center; border-top: 1px solid var(--gray-200);">
+                <small class="text-muted" style="display: block; margin-bottom: 10px;">
+                    <i class="bi bi-info-circle"></i> Demo Credentials
+                </small>
+                <code style="background: white; padding: 8px 12px; border-radius: 6px; display: inline-block; font-size: 12px; border: 1px solid var(--gray-200);">
+                    admin / admin
+                </code>
+            </div>
+        </div>
+
+        <!-- Footer Text -->
+        <div style="text-align: center; margin-top: 24px; color: var(--gray-600);">
+            <p style="font-size: 12px; margin: 0;">
+                © 2025 CRM Pro. All rights reserved.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

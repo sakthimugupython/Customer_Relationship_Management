@@ -1,0 +1,168 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Dashboard - CRM System{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+    <h1>Welcome back! 👋</h1>
+    <p>Here's what's happening in your CRM today.</p>
+</div>
+
+<!-- Statistics Grid -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="color: var(--primary);">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-label">Total Customers</div>
+            <div class="stat-value">{{ total_customers }}</div>
+            <div class="stat-change">
+                <a href="{% url 'customer_list' %}" class="btn btn-primary btn-sm mt-2">
+                    <i class="bi bi-arrow-right"></i> View All
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card stat-new">
+            <div class="stat-icon" style="color: var(--accent);">
+                <i class="bi bi-star"></i>
+            </div>
+            <div class="stat-label">New Leads</div>
+            <div class="stat-value">{{ new_customers }}</div>
+            <div class="stat-change">
+                <a href="{% url 'customer_list' %}?status=new" class="btn btn-primary btn-sm mt-2">
+                    <i class="bi bi-arrow-right"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card stat-contacted">
+            <div class="stat-icon" style="color: var(--secondary);">
+                <i class="bi bi-chat-left-dots"></i>
+            </div>
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value">{{ contacted_customers }}</div>
+            <div class="stat-change">
+                <a href="{% url 'customer_list' %}?status=contacted" class="btn btn-primary btn-sm mt-2">
+                    <i class="bi bi-arrow-right"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card stat-converted">
+            <div class="stat-icon" style="color: var(--background);">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-label">Converted</div>
+            <div class="stat-value">{{ converted_customers }}</div>
+            <div class="stat-change">
+                <a href="{% url 'customer_list' %}?status=converted" class="btn btn-primary btn-sm mt-2">
+                    <i class="bi bi-arrow-right"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lost Customers Card -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card stat-lost">
+            <div class="stat-icon" style="color: var(--danger);">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="stat-label">Lost Deals</div>
+            <div class="stat-value">{{ lost_customers }}</div>
+            <div class="stat-change">
+                <a href="{% url 'customer_list' %}?status=lost" class="btn btn-primary btn-sm mt-2">
+                    <i class="bi bi-arrow-right"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Today's Follow-ups Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">
+                            <i class="bi bi-calendar-check"></i> Today's Follow-ups
+                        </h5>
+                        <small class="text-muted">{{ today_count }} scheduled follow-ups</small>
+                    </div>
+                    <a href="{% url 'followup_add' %}" class="btn btn-success btn-sm">
+                        <i class="bi bi-plus-lg"></i> Add Follow-up
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if today_followups %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Contact Info</th>
+                                <th>Follow-up Time</th>
+                                <th>Note</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for followup in today_followups %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar" style="width: 32px; height: 32px; font-size: 12px;">
+                                            {{ followup.customer.name|first|upper }}
+                                        </div>
+                                        <strong>{{ followup.customer.name }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small">
+                                        <div>{{ followup.customer.phone }}</div>
+                                        <div class="text-muted">{{ followup.customer.email }}</div>
+                                    </div>
+                                </td>
+                                <td>{{ followup.follow_up_date|date:"H:i" }}</td>
+                                <td>
+                                    <small class="text-muted">{{ followup.note|truncatewords:8 }}</small>
+                                </td>
+                                <td>
+                                    <a href="{% url 'customer_detail' followup.customer.pk %}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-calendar-x"></i>
+                    <p>No follow-ups scheduled for today. Great job staying on top of things! 🎉</p>
+                    <a href="{% url 'followup_add' %}" class="btn btn-primary btn-sm mt-3">
+                        <i class="bi bi-plus-lg"></i> Schedule a Follow-up
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

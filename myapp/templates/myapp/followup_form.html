@@ -1,0 +1,89 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Add Follow-up - CRM System{% endblock %}
+{% block header_title %}Create Follow-up{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+    <h1>Schedule Follow-up</h1>
+    <p>Keep track of customer interactions and plan next steps</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-event"></i> Follow-up Details
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="customer" class="form-label">
+                            <i class="bi bi-person"></i> Select Customer
+                            <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="customer" name="customer" required style="height: 44px;">
+                            <option value="">Choose a customer...</option>
+                            {% for cust in customers %}
+                            <option value="{{ cust.pk }}" {% if customer.pk == cust.pk %}selected{% endif %}>
+                                {{ cust.name }} ({{ cust.email }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="note" class="form-label">
+                            <i class="bi bi-pencil-square"></i> Follow-up Note
+                            <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="note" name="note" rows="6" 
+                                  placeholder="Summarize the interaction, any commitments, next steps, etc."
+                                  required></textarea>
+                        <small class="text-muted">Be detailed about the conversation and any important details</small>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="follow_up_date" class="form-label">
+                                <i class="bi bi-calendar-check"></i> Follow-up Date & Time
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="datetime-local" class="form-control" id="follow_up_date" 
+                                   name="follow_up_date" required style="height: 44px;">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="next_follow_up_date" class="form-label">
+                                <i class="bi bi-calendar-arrow-right"></i> Next Follow-up Date
+                            </label>
+                            <input type="datetime-local" class="form-control" id="next_follow_up_date" 
+                                   name="next_follow_up_date" style="height: 44px;">
+                            <small class="text-muted">Optional: When to follow up next</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        {% if customer %}
+                        <a href="{% url 'customer_detail' customer.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        {% endif %}
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> Schedule Follow-up
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

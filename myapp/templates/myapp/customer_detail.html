@@ -1,0 +1,150 @@
+    {% extends 'myapp/base.html' %}
+
+{% block title %}{{ customer.name }} - CRM System{% endblock %}
+{% block header_title %}{{ customer.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+    <div class="d-flex justify-content-between align-items-start">
+        <div class="d-flex align-items-center gap-3 flex-grow-1">
+            <div class="user-avatar" style="width: 64px; height: 64px; font-size: 24px;">
+                {{ customer.name|first|upper }}
+            </div>
+            <div>
+                <h1 class="mb-2">{{ customer.name }}</h1>
+                <div>
+                    {% if customer.status == 'new' %}
+                    <span class="badge bg-info">
+                        <i class="bi bi-star"></i> New
+                    </span>
+                    {% elif customer.status == 'contacted' %}
+                    <span class="badge bg-warning">
+                        <i class="bi bi-chat-left-dots"></i> Contacted
+                    </span>
+                    {% elif customer.status == 'converted' %}
+                    <span class="badge bg-success">
+                        <i class="bi bi-check-circle"></i> Converted
+                    </span>
+                    {% elif customer.status == 'lost' %}
+                    <span class="badge bg-danger">
+                        <i class="bi bi-x-circle"></i> Lost
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'customer_edit' customer.pk %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{% url 'customer_delete' customer.pk %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Delete
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- Customer Info -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-circle"></i> Contact Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase">Email</label>
+                    <p class="mb-0">
+                        <a href="mailto:{{ customer.email }}" class="text-decoration-none">
+                            {{ customer.email }}
+                        </a>
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase">Phone</label>
+                    <p class="mb-0">
+                        <a href="tel:{{ customer.phone }}" class="text-decoration-none">
+                            {{ customer.phone }}
+                        </a>
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase">Address</label>
+                    <p class="mb-0">{{ customer.address }}</p>
+                </div>
+
+                <hr>
+
+                <div class="mb-0">
+                    <label class="small text-muted text-uppercase">Created</label>
+                    <p class="mb-0">{{ customer.created_at|date:"F d, Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Follow-ups Section -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-check"></i> Follow-up History
+                </h5>
+                <a href="{% url 'followup_add_from_customer' customer.pk %}" class="btn btn-success btn-sm">
+                    <i class="bi bi-plus-lg"></i> Add Follow-up
+                </a>
+            </div>
+            <div class="card-body">
+                {% if followups %}
+                <div class="timeline">
+                    {% for followup in followups %}
+                    <div class="timeline-item">
+                        <div class="card" style="border: 1px solid var(--gray-200);">
+                            <div class="card-header" style="background: var(--gray-50); border-bottom: 1px solid var(--gray-200);">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>Follow-up on {{ followup.follow_up_date|date:"F d, Y" }}</strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i> {{ followup.follow_up_date|date:"H:i" }}
+                                        </small>
+                                    </div>
+                                    {% if followup.next_follow_up_date %}
+                                    <span class="badge bg-info">
+                                        <i class="bi bi-arrow-repeat"></i> 
+                                        Next: {{ followup.next_follow_up_date|date:"M d" }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">{{ followup.note }}</p>
+                            </div>
+                            <div class="card-footer" style="background: var(--gray-50);">
+                                <small class="text-muted">
+                                    Created {{ followup.created_at|date:"F d, Y H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-calendar-x"></i>
+                    <p>No follow-ups recorded yet</p>
+                    <a href="{% url 'followup_add_from_customer' customer.pk %}" class="btn btn-primary btn-sm mt-3">
+                        <i class="bi bi-plus-lg"></i> Create First Follow-up
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

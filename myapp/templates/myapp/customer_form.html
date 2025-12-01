@@ -1,0 +1,94 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}{% if is_edit %}Edit{% else %}Add{% endif %} Customer - CRM System{% endblock %}
+{% block header_title %}{% if is_edit %}Edit Customer{% else %}New Customer{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+    <h1>{% if is_edit %}Edit Customer{% else %}Add New Customer{% endif %}</h1>
+    <p>{% if is_edit %}Update customer information and details{% else %}Create a new customer record{% endif %}</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-lines-fill"></i> 
+                    {% if is_edit %}Edit Information{% else %}Customer Details{% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">
+                                <i class="bi bi-person"></i> Full Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ customer.name }}" placeholder="Enter full name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">
+                                <i class="bi bi-tag"></i> Status
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="">Select Status</option>
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if customer.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">
+                                <i class="bi bi-envelope"></i> Email
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ customer.email }}" placeholder="Enter email address" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">
+                                <i class="bi bi-telephone"></i> Phone
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="{{ customer.phone }}" placeholder="Enter phone number" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="address" class="form-label">
+                            <i class="bi bi-geo-alt"></i> Address
+                            <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="address" name="address" rows="4" 
+                                  placeholder="Enter complete address" required>{{ customer.address }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% if is_edit %}{% url 'customer_detail' customer.pk %}{% else %}{% url 'customer_list' %}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> 
+                            {% if is_edit %}Update Customer{% else %}Create Customer{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
